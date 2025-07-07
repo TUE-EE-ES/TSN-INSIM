@@ -23,8 +23,10 @@ This project does not publish or distribute the source code of OMNeT++ or INET, 
 
 If you want to use the OMNeT++ simulation features (which are optional components of INSIM), you need to Install OMNeT++ and the INET Framework separately on your host machine and configure the paths in app.py accordingly. INSIM will then run simulations by invoking the OMNeT++ shell.
 If you wish to use this simulation functionality, you must follow the respective license terms of these tools:
+
 OMNeT++: https://github.com/omnetpp/omnetpp/blob/master/doc/License
 INET Framework: https://github.com/inet-framework/inet/blob/master/LICENSE.md
+
 If you do not require OMNeT++ features, you can still use the core INSIM application by complying only with the INSIM and Bootstrap license.
 
 Important: Responsibility for complying with all applicable third-party licenses lies solely with the user. You are responsible for ensuring your use of INSIM and any third-party components meets their respective license requirements.
