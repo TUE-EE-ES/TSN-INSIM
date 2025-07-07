@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>In-Vehicle TSN Simulator</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<nav class="navbar navbar-dark bg-dark">
+  <img src="{{ url_for('static', filename='images/logo.png') }}" alt="My Logo" style="width: 250px; height:auto; margin-right:10px;">
+  <span class="navbar-brand mb-0 h1">In-Vehicle TSN Simulator (INSIM)</span>
+  <div style="margin-left:auto;">
+    <button id="saveProjectBtn" class="btn btn-outline-light">Save</button>
+    <button id="loadProjectBtn" class="btn btn-outline-light">Load</button>
+    <button class="btn btn-outline-light ml-2" onclick="scrollToSection('ackSection')">Acknowledgement</button>
+    <button class="btn btn-outline-light ml-2" onclick="scrollToSection('contactSection')">Contact / Report Issue</button>
+    <button class="btn btn-outline-light ml-2" onclick="scrollToSection('manualSection')">Hands‑On Manual</button>
+  </div>
+</nav>
+
+<div class="container-fluid mt-3">
+  <div class="row">
+    <div class="col-md-2">
+      <div class="toolbox-section">
+        <h6>Use Case</h6>
+        <button id="selectUseCaseBtn" class="btn btn-outline-primary btn-block mb-2">Select Use Case</button>
+      </div>
+      <hr>
+      <div class="toolbox-section">
+        <h6>Design Section</h6>
+        <button id="addSwitchBtn" class="btn btn-primary btn-block mb-2">Add TSN Switch</button>
+        <button id="addDeviceBtn" class="btn btn-secondary btn-block mb-2">Add TSN Device</button>
+        <button id="connectModeBtn" class="btn btn-info btn-block mb-2">Connection Mode</button>
+        <button id="linksBtn" class="btn btn-outline-primary btn-block mb-2">Manage Links</button>
+      </div>
+      <hr>
+      <div class="toolbox-section">
+        <h6>Configuration Section</h6>
+        <button id="configureNodeBtn" class="btn btn-warning btn-block mb-2">Configure Node</button>
+        <button id="flowsBtn" class="btn btn-success btn-block mb-2">Manage Flows</button>
+        <button id="globalConfigBtn" class="btn btn-outline-dark btn-block mb-2">Global Config</button>
+      </div>
+      <hr>
+      <div class="toolbox-section">
+        <h6>Benchmark Section</h6>
+        <button id="recommendAppBtn" class="btn btn-outline-info btn-block mb-2">Recommend Application</button>
+      </div>
+      <hr>
+      <div class="toolbox-section">
+        <h6>Simulation Section</h6>
+        <button id="exportBtn" class="btn btn-danger btn-block mb-2">Export OMNeT++</button>
+        <button id="runSimBtn" class="btn btn-success btn-block mb-2">Run Simulation</button>
+      </div>
+      <hr>
+      <div class="toolbox-section">
+        <h6>Performance Models</h6>
+        <button id="choosePerformanceModelBtn" class="btn btn-info btn-block mb-2">Choose Performance Model</button>
+        <button id="runPerformanceModelBtn" class="btn btn-info btn-block mb-2">Run Performance Model</button>
+      </div>
+      <hr>
+      <div class="toolbox-section">
+        <h6>Scheduler</h6>
+        <button id="chooseSchedulerBtn" class="btn btn-outline-info btn-block mb-2">Choose Scheduler</button>
+        <button id="runSchedulerBtn" class="btn btn-outline-primary btn-block mt-2">Run Scheduler</button>
+      </div>
+    </div>
+    <div class="col-md-10">
+      <div id="canvas" class="diagram-area border rounded"></div>
+    </div>
+  </div>
+</div>
+
+<section id="ackSection" class="container mt-5">
+  <h3>Acknowledgement</h3>
+  <p>
+    This work has received funding from the European Chips Joint Undertaking
+    under Framework Partnership Agreement&nbsp;No&nbsp;101139789 (HAL4SDV).
+  </p>
+  <img src="{{ url_for('static', filename='images/hal4sdv.png') }}"
+       alt="HAL4SDV logo" class="img-fluid" style="max-width:220px;">
+</section>
+
+<section id="contactSection" class="container mt-5">
+  <h3>Contact / Report Issue</h3>
+  <p>
+    If you are interested in contributing to this project or would like to
+    report an issue, please contact us at:
+    <a href="mailto:m.karimi@tue.nl">m.karimi@tue.nl</a>.
+  </p>
+</section>
+
+<section id="manualSection" class="container mt-5 mb-5">
+  <h3>Hands‑On User Manual</h3>
+</section>
+
+<div class="custom-modal" id="useCaseModal" style="display:none;">
+  <div class="custom-modal-content">
+    <div class="custom-modal-header">
+      <span>Select a Use Case</span>
+      <span class="custom-modal-close" onclick="hideModal('useCaseModal')">&times;</span>
+    </div>
+    <div class="custom-modal-body">
+      <p>Please choose a scenario:</p>
+      <button class="btn btn-primary mb-2" onclick="applyLaneKeepingUseCase()">Lane Keeping Assistant (Simplified)</button>
+    </div>
+    <div class="custom-modal-footer">
+      <button class="btn btn-secondary" onclick="hideModal('useCaseModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="custom-modal" id="recommendModal">
+  <div class="custom-modal-content">
+    <div class="custom-modal-header">
+      <span>Application Recommendation</span>
+      <span class="custom-modal-close" onclick="hideModal('recommendModal')">&times;</span>
+    </div>
+    <div class="custom-modal-body">
+      <div class="form-group">
+        <label for="appSelect">Select an Application:</label>
+        <select id="appSelect" class="form-control">
+          <option value="ADAS">ADAS (Advanced Driver-Assistance Systems)</option>
+          <option value="Infotainment">Infotainment</option>
+          <option value="Diagnostics">Diagnostics</option>
+          <option value="Powertrain">Powertrain</option>
+          <option value="Comfort">Comfort</option>
+        </select>
+      </div>
+    </div>
+    <div class="custom-modal-footer">
+      <button class="btn btn-secondary" onclick="hideModal('recommendModal')">Close</button>
+      <button class="btn btn-primary" onclick="generateRecommendedTopology()">Generate Application</button>
+    </div>
+  </div>
+</div>
+
+<div class="custom-modal" id="simResultModal" style="display:none;">
+  <div class="custom-modal-content">
+    <div class="custom-modal-header">
+      <span>Simulation Result</span>
+      <span class="custom-modal-close" onclick="hideModal('simResultModal')">&times;</span>
+    </div>
+    <div class="custom-modal-body" id="simResultContent" style="white-space: pre-wrap;"></div>
+    <div class="custom-modal-footer">
+      <button class="btn btn-secondary" onclick="hideModal('simResultModal')">Close</button>
+      <button class="btn btn-primary" onclick="window.location.href='/results'">View Detailed Results</button>
+    </div>
+  </div>
+</div>
+
+<div class="custom-modal" id="nodeConfigModal">
+  <div class="custom-modal-content">
+    <div class="custom-modal-header">
+      <span>Configure Node</span>
+      <span class="custom-modal-close" onclick="closeNodeConfigModal()">&times;</span>
+    </div>
+    <div class="custom-modal-body">
+      <div class="form-row mb-2">
+        <label class="col-form-label col-4">Node ID</label>
+        <div class="col-8">
+          <input type="text" id="nodeIdInput" class="form-control" readonly>
+        </div>
+      </div>
+      <div class="form-row mb-2">
+        <label class="col-form-label col-4">Node Type</label>
+        <div class="col-8">
+          <input type="text" id="nodeTypeInput" class="form-control" readonly>
+        </div>
+      </div>
+      <div id="gclEditorSection" style="margin-top:10px; display:none;">
+        <h6>Gate Control Lists (per port)</h6>
+        <div id="gclPortsContainer"></div>
+        <button class="btn btn-sm btn-outline-primary mt-2" onclick="addPortConfig()">Add Port Config</button>
+      </div>
+    </div>
+    <div class="custom-modal-footer">
+      <button class="btn btn-secondary" onclick="closeNodeConfigModal()">Close</button>
+      <button class="btn btn-primary" onclick="saveNodeConfig()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="custom-modal" id="flowsModal">
+  <div class="custom-modal-content">
+    <div class="custom-modal-header">
+      <span>Manage Flows</span>
+      <span class="custom-modal-close" onclick="closeFlowsModal()">&times;</span>
+    </div>
+    <div class="custom-modal-body">
+      <div class="form-row mb-2">
+        <label class="col-form-label col-4">Flow Name</label>
+        <div class="col-8">
+          <input type="text" id="flowName" class="form-control" placeholder="ADAS Video...">
+        </div>
+      </div>
+      <div class="form-row mb-2">
+        <label class="col-form-label col-4">Source Device</label>
+        <div class="col-8">
+          <select id="flowSource" class="form-control"></select>
+        </div>
+      </div>
+      <div class="form-row mb-2">
+        <label class="col-form-label col-4">Destination Device</label>
+        <div class="col-8">
+          <select id="flowDestination" class="form-control"></select>
+        </div>
+      </div>
+      <div class="form-row mb-2">
+        <label class="col-form-label col-4">Packet Size</label>
+        <div class="col-8">
+          <input type="text" id="flowPacketSize" class="form-control" value="1000B">
+        </div>
+      </div>
+      <div class="form-row mb-2">
+        <label class="col-form-label col-4">Interval</label>
+        <div class="col-8">
+          <input type="text" id="flowInterval" class="form-control" value="200us">
+          <small class="text-muted">Ex: "200us" or "exponential(400us)"</small>
+        </div>
+      </div>
+      <div class="form-row mb-2">
+        <label class="col-form-label col-4">Traffic Class</label>
+        <div class="col-8">
+          <input type="number" id="flowTrafficClass" class="form-control" value="0">
+        </div>
+      </div>
+      <button class="btn btn-success btn-sm" onclick="addFlow()">Add Flow</button>
+      <hr>
+      <div id="flowList"></div>
+    </div>
+    <div class="custom-modal-footer">
+      <button class="btn btn-secondary" onclick="closeFlowsModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="custom-modal" id="linksModal">
+  <div class="custom-modal-content">
+    <div class="custom-modal-header">
+      <span>Manage Links</span>
+      <span class="custom-modal-close" onclick="closeLinksModal()">&times;</span>
+    </div>
+    <div class="custom-modal-body">
+      <div id="linksList"></div>
+    </div>
+    <div class="custom-modal-footer">
+      <button class="btn btn-secondary" onclick="closeLinksModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="custom-modal" id="globalConfigModal">
+  <div class="custom-modal-content">
+    <div class="custom-modal-header">
+      <span>Global Config</span>
+      <span class="custom-modal-close" onclick="closeGlobalConfigModal()">&times;</span>
+    </div>
+    <div class="custom-modal-body">
+      <div class="form-row mb-2">
+        <label class="col-form-label col-5">Default Simulation Time</label>
+        <div class="col-7">
+          <input type="text" id="globalSimTime" class="form-control" value="20ms">
+        </div>
+      </div>
+      <div class="form-row mb-2">
+        <label class="col-form-label col-5">Default Link Speed</label>
+        <div class="col-7">
+          <input type="text" id="globalLinkSpeed" class="form-control" value="100Mbps">
+        </div>
+      </div>
+    </div>
+    <div class="custom-modal-footer">
+      <button class="btn btn-secondary" onclick="closeGlobalConfigModal()">Close</button>
+      <button class="btn btn-primary" onclick="saveGlobalConfig()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="custom-modal" id="choosePerformanceModelModal">
+  <div class="custom-modal-content" style="width: 400px;">
+    <div class="custom-modal-header">
+      <span>Choose Performance Model</span>
+      <span class="custom-modal-close" onclick="hideModal('choosePerformanceModelModal')">&times;</span>
+    </div>
+    <div class="custom-modal-body">
+      <label>Select a Performance Model:</label>
+      <select id="perfModelSelect" class="form-control mb-2"></select>
+      <button class="btn btn-sm btn-secondary" onclick="showModal('addPerformancePluginModal')">Add Plugin</button>
+    </div>
+    <div class="custom-modal-footer">
+      <button class="btn btn-primary" onclick="choosePerformanceModel()">OK</button>
+      <button class="btn btn-secondary" onclick="hideModal('choosePerformanceModelModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="custom-modal" id="addPerformancePluginModal">
+  <div class="custom-modal-content" style="width: 600px;">
+    <div class="custom-modal-header">
+      <span>Add Performance Plugin</span>
+      <span class="custom-modal-close" onclick="hideModal('addPerformancePluginModal')">&times;</span>
+    </div>
+    <div class="custom-modal-body">
+      <label>New Plugin Name (no spaces):</label>
+      <input type="text" id="perfPluginName" class="form-control mb-2" placeholder="MyDelayCalc">
+      <label>Plugin Code:</label>
+      <textarea id="perfPluginCode" class="form-control" rows="15"></textarea>
+    </div>
+    <div class="custom-modal-footer">
+      <button class="btn btn-success" onclick="savePerformancePlugin()">Save Plugin</button>
+      <button class="btn btn-secondary" onclick="hideModal('addPerformancePluginModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="custom-modal" id="chooseSchedulerModal">
+  <div class="custom-modal-content" style="width: 400px;">
+    <div class="custom-modal-header">
+      <span>Choose Scheduler</span>
+      <span class="custom-modal-close" onclick="hideModal('chooseSchedulerModal')">&times;</span>
+    </div>
+    <div class="custom-modal-body">
+      <label>Select a Scheduler:</label>
+      <select id="schedulerSelect" class="form-control mb-2"></select>
+      <button class="btn btn-sm btn-secondary" onclick="showModal('addSchedulerPluginModal')">Add Plugin</button>
+    </div>
+    <div class="custom-modal-footer">
+      <button class="btn btn-primary" onclick="chooseScheduler()">OK</button>
+      <button class="btn btn-secondary" onclick="hideModal('chooseSchedulerModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="custom-modal" id="addSchedulerPluginModal">
+  <div class="custom-modal-content" style="width: 600px;">
+    <div class="custom-modal-header">
+      <span>Add Scheduler Plugin</span>
+      <span class="custom-modal-close" onclick="hideModal('addSchedulerPluginModal')">&times;</span>
+    </div>
+    <div class="custom-modal-body">
+      <label>New Scheduler Name (no spaces):</label>
+      <input type="text" id="schedPluginName" class="form-control mb-2" placeholder="MyScheduler">
+      <label>Plugin Code:</label>
+      <textarea id="schedPluginCode" class="form-control" rows="15"></textarea>
+    </div>
+    <div class="custom-modal-footer">
+      <button class="btn btn-success" onclick="saveSchedulerPlugin()">Save Plugin</button>
+      <button class="btn btn-secondary" onclick="hideModal('addSchedulerPluginModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+
+<input type="file" id="loadProjectFileInput" accept=".insim" style="display:none;" />
+<script>
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+</script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Simulation Detailed Results</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    body { padding-top: 20px; }
+    .log-container {
+      background: #f8f9fa; padding: 15px; border-radius: 5px;
+      max-height: 300px; overflow-y: auto;
+    }
+    .chart-img { margin-bottom: 20px; }
+    .loader-overlay {
+      position: relative;
+      min-height: 300px;
+    }
+    .loader-overlay .loader-content {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255,255,255,0.8);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.5s ease;
+    }
+    .loader-overlay.hidden .loader-content {
+      opacity: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Simulation Detailed Results</h2>
+    <hr>
+    <h4>Simulation Logs</h4>
+    <div class="log-container" id="logContainer">
+    </div>
+    <hr>
+    <h4>Charts</h4>
+    <div id="chartSection" class="loader-overlay">
+      <div id="chartLoader" class="loader-content">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>Loading charts...</p>
+      </div>
+    
+
+      <div id="chartContainer" class="row" style="display: none;">
+      </div>
+    </div>    
+    </div>
+    <hr>
+    <button class="btn btn-secondary" onclick="window.location.href='/'">Back to Main</button>
+  </div>
+  
+  <script>
+
+    document.addEventListener("DOMContentLoaded", function() {
+      const logContainer = document.getElementById("logContainer");
+      const simLogs = localStorage.getItem("simLogs") || "No simulation logs available.";
+      logContainer.textContent = simLogs;
+      loadAllCharts(); 
+    });
+  </script>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

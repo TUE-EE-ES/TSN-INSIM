@@ -1,0 +1,124 @@
+
+.diagram-area {
+  width: 100%;
+  height: 600px;
+  position: relative;
+  background-color: #f8f9fa;
+  background-image: url("../images/car_top_view.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+
+.node {
+  position: absolute;
+  width: 100px;
+  height: 40px;
+  background-color: #e0e0ff;
+  border: 2px solid #333;
+  text-align: center;
+  line-height: 40px;
+  cursor: move;
+  font-weight: bold;
+  border-radius: 5px;
+}
+.node.selected {
+  border-color: red;
+}
+
+
+.connection-line {
+  position: absolute;
+  height: 2px;
+  background-color: #d00;
+  transform-origin: 0 0;
+  z-index: 0;
+}
+
+
+.custom-modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+}
+.custom-modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 20px;
+  width: 500px;
+  border-radius: 4px;
+}
+.custom-modal-header,
+.custom-modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.custom-modal-close {
+  cursor: pointer;
+  font-size: 20px;
+  color: #666;
+}
+.custom-modal-close:hover {
+  color: #000;
+}
+
+
+
+.custom-modal-body {
+  max-height: 70vh;    
+  overflow-y: auto;   
+}
+.custom-modal-content {
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh; 
+}
+
+
+.custom-modal-header,
+.custom-modal-footer {
+  flex-shrink: 0;  
+}
+
+
+.custom-modal-body {
+  flex: 1;          
+  overflow-y: auto;  
+}
+.loader-overlay {
+  position: relative;
+}
+
+.loader-content {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255,255,255,0.8);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.5s ease;
+}
+
+.loader-content.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#chartContainer img {
+  width: 1000px !important;   
+  height: auto !important;   
+}
+
+
+#chartContainer .col-md-4 {
+  flex: 0 0 100% !important;
+  max-width: 180% !important;
+}
