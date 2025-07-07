@@ -25,6 +25,7 @@ If you want to use the OMNeT++ simulation features (which are optional component
 If you wish to use this simulation functionality, you must follow the respective license terms of these tools:
 
 OMNeT++: https://github.com/omnetpp/omnetpp/blob/master/doc/License
+
 INET Framework: https://github.com/inet-framework/inet/blob/master/LICENSE.md
 
 If you do not require OMNeT++ features, you can still use the core INSIM application by complying only with the INSIM and Bootstrap license.
